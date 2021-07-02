@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "ex1_func.h": "c",
+        "cstdlib": "cpp",
+        "ex2.c": "cpp"
+    }
+}
