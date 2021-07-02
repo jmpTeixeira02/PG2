@@ -11,7 +11,7 @@ FileInfo *fileInfoNew( char *sharedPath, char *name ){
 		exit( -1 );
     }
     file->path = sharedPath;
-    memcpy(file->name, name, strlen(name)+1);
+    file->name = strdup(name);
     file->term = termFind(name);
     return file;
 }

@@ -14,17 +14,15 @@ RefArray *refArrCreate( void ){
         fprintf( stderr, "Erro, malloc falhou alojamento de StrShare\n" );
 		exit( -1 );
     }
-    array->space = 0;
-    array->count = 0;
+    array->space = array->count = 0;
     array->data = NULL;
     return array;
 }
 
 // Deixar por fazer
 void refArrDelete( RefArray *ra){
-    for (int i = 0; i < ra->count; i++){
-        free (ra->data[i]);
-    }
+    for (int i = 0; i < ra->count; i++)
+        fileInfoDelete(ra->data[i]);
     free(ra->data);
     free(ra);
 }
