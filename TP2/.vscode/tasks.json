@@ -11,6 +11,7 @@
                 "fileInfo.o",
                 "refArray.o",
                 "strShare.o",
+                "dirTree.o",
                 "${file}",
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}"

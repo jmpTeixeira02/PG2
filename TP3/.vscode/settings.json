@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "bintree.h": "c",
+        "refarray.h": "c",
+        "hashtable.h": "c"
+    }
+}
