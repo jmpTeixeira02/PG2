@@ -20,11 +20,43 @@ HTable *hCreate( int size ){
     return table;
 }
 
-void hAdd( HTable *ht, char *name, FileInfo *ref ){
+static RefArray *hLSearch( LNode *l, char *name ){
+	for(LNode *p = l; p != NULL; p = p->next){
+		if( strcmp( p->name, name ) == 0 )
+			return p->refArr;
+	}
+	return NULL;
 }
 
 RefArray *hSearch( HTable *ht, char * name){
-    for(int i = 0; i < ht->size; i++){
-        
-    }
+    int i = hash (ht, name);
+    return hLSearch (ht->table[i], name);
+}
+
+static LNode *hLAdd( LNode *l, char *name, FileInfo *ref){
+	LNode *n = malloc(sizeof *n);
+	n->name = strdup(name);
+	n->next = l;
+    RefArray *arr = refArrCreate();
+    refArrAdd(arr, ref);
+    n->refArr=arr;
+	return n;
+}
+
+void hAdd( HTable *ht, char *name, FileInfo *ref ){
+    int i = hash (ht, name);
+    RefArray* found = hLSearch(ht->table[i], name);
+    // Ainda não existir
+    if (found == NULL)
+        ht->table[i] = hLAdd(ht->table[i], name, ref);
+    else
+        refArrAdd(ht->table[i]->refArr, ref);
+}
+
+
+void hFree( HTable *ht ){
+    for (int i = 0; i < ht->size; i++)
+        free(ht->table[i]);
+    free(ht->table);
+    free(ht);
 }

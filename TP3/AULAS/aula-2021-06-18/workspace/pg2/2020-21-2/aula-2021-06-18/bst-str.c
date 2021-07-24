@@ -26,7 +26,9 @@ void tPrintIndent( TNode *r, int h ){
 }
 
 void tAdd( TNode **rp, char *v ){
+	printf("\n\n%p\n", *rp);
 	if( *rp == NULL ){
+		printf("\nNEW NODE\n\n");
 		TNode *n = malloc( sizeof *n );
 		n->data = strdup(v);
 		n->left = n->right = NULL;

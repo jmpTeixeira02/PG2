@@ -18,5 +18,6 @@ FileInfo *fileInfoNew( char *sharedPath, char *name ){
 
 void fileInfoDelete( FileInfo *info ){
     free(info->name);
+    free(info->path);
     free(info);
 }

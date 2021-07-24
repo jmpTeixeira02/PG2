@@ -2,14 +2,30 @@
 #include <dirent.h>
 #include <stdbool.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "dirTree.h"
+#include "binTree.h"
+#include "hashTable.h"
 
 static void arrRefPrint(RefArray *Ref){
    for (int i = 0; i < Ref->count; i++){
       printf("%s - %s\n", Ref->data[i]->name, Ref->data[i]->path);
    }
    return;
+}
+
+static void print(FileInfo *ref, void *none){
+   printf("%s - %s\n", ref->name, ref->path);
+} 
+
+static void treeAdd(FileInfo *ref, void *rootPtr){
+   //printf("\n%s\n", ref->name+ref->term+1);
+   tAdd(rootPtr,ref->name+ref->term+1, ref);
+}
+static void hashAdd(FileInfo *ref, void *table){
+   char* temp = strndup(ref->name, ref->term);
+   hAdd(table, temp, ref);
 }
 
 int main(int argc, char *argv[])
@@ -21,24 +37,31 @@ int main(int argc, char *argv[])
    }
    char* path = argv[1];
 
+   char* terms[] = {"out","a","c"};
 
    //Criação das estruturas
    StrShare *pathShare = strShareCreate();
    RefArray *origRef = refArrCreate();
    RefArray *sortRef = refArrCreate();
-   char* terms[] = {"a","c","out"};
+   RefArray *tempPtr = refArrCreate();
    termSetupTypes(terms,sizeof( terms ) / sizeof( char * ));
    scanDirTree(path,pathShare, origRef, sortRef);
 
    refArrSort(sortRef);
 
+   TNode *tree = NULL; // Criar árvore
+   HTable *table = hCreate(26);
+
+   // Preencher árvore
+   refArrScan(sortRef, treeAdd, &tree);
+   
+   // Preencher hashtable
+   refArrScan(sortRef, hashAdd, table);
 
    char input;
    do{
 
       printf("\nIntroduza a opção que deseja\n");
-
-      char input;
       scanf(" %c", &input);
       char word[25];
       if (input == 't' || input == 's'){
@@ -48,16 +71,16 @@ int main(int argc, char *argv[])
    
       switch(input){
          case 't':
-            for (int i = 0; i < sortRef->count; i++){
-               if (strcmp(sortRef->data[i]->name+sortRef->data[i]->term+1, word) == 0)
-                  printf("%s - %s\n", sortRef->data[i]->name, sortRef->data[i]->path);
-            }
+            tempPtr = tSearch(tree, word);
+            if (tempPtr == NULL)
+               break;
+            refArrScan(tempPtr, print, NULL);
             break;
          case 's':
-            for (int i = 0; i < sortRef->count; i++){
-               if (strncmp(sortRef->data[i]->name, word, sortRef->data[i]->term) == 0)
-                  printf("%s - %s\n", sortRef->data[i]->name, sortRef->data[i]->path);
-            }
+            tempPtr = hSearch(table, word);
+            if (tempPtr == NULL)
+               break;
+            refArrScan(tempPtr, print, NULL);
             break;
          case 'n':
             arrRefPrint(sortRef);
